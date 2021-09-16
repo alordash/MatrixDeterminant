@@ -10,12 +10,11 @@
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
-      "commandLineArgs": "--pathbase=/MatrixDeterminantCalculator/publish/wwwroot",
       "launchBrowser": true,
-      "launchUrl": "MatrixDeterminantCalculator/publish/wwwroot/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
+      "nativeDebugging": true,
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}"
     },
     "MatrixDeterminantCalculator": {

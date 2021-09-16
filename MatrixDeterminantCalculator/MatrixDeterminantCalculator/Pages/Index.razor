@@ -3,3 +3,56 @@
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+<br />
+<textarea @bind="InputString" @bind:event="oninput" style="height:100px; width:100px" />
+<br />
+<h3>Result:</h3>
+<br />
+<div>
+    <textarea @bind="outputString" style="height:100px; width:100px" />
+</div>
+
+@code {
+    private string inputString = "Type matrix here";
+    public string InputString {
+        get { return inputString; }
+        set {
+            inputString = value;
+            TryCreateMatrix(inputString, out m);
+        }
+    }
+
+    public string outputString = "";
+
+    Matrix m;
+
+    bool TryCreateMatrix(string input, out Matrix m) {
+        bool inputIsValid = true;
+
+        var nums = input.Split('\n', StringSplitOptions.RemoveEmptyEntries).Select(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries)).Select(words => words.Select(word => {
+            double.TryParse(word, out double v);
+            return v;
+        }).ToArray()).ToArray();
+
+        int w = nums.Count();
+        int h = w;
+        for (int i = 0; inputIsValid && i < w; i++) {
+            var numsRow = nums[i];
+            if (numsRow.Count() != w) {
+                inputIsValid = false;
+            }
+        }
+
+        if (!inputIsValid) {
+            m = null;
+            outputString = "Entered matrix is not a square";
+            return false;
+        } else {
+            m = new Matrix(nums);
+        }
+
+        outputString = string.Join('\n', nums.Select(numsRow => string.Join(' ', numsRow)));
+
+        return true;
+    }
+}
