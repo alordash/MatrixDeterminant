@@ -66,12 +66,13 @@
             }
         }
 
+        var rand = new Random();
         int maxLength = 1;
         double[][] nums = new double[maxSideLength][];
         for (int i = 0; i < maxSideLength; i++) {
             nums[i] = new double[maxSideLength];
             for (int j = 0; j < maxSideLength; j++) {
-                double v = nums[i][j] = i < rawNums.Length && j < rawNums[i].Length ? rawNums[i][j] : 0;
+                double v = nums[i][j] = i < rawNums.Length && j < rawNums[i].Length ? rawNums[i][j] : rand.NextDouble();
 
                 int length;
                 if (double.IsNaN(v)) {
@@ -90,11 +91,9 @@
 
         outputString = String.Join('\n', nums.Select(numsRow => String.Join(' ', numsRow.Select(n => String.Format("{0,-" + maxLength.ToString() + "}", n)))));
 
-        ShowDeterminant(m);
-    }
-
-    void ShowDeterminant(Matrix m) {
-        var determinant = m.CalculateDeterminant().ToString();
-        determinantString = determinant.ToString();
+        Task.Run(() => {
+            var determinant = m.CalculateDeterminant();
+            determinantString = determinant.ToString();
+        });
     }
 }
