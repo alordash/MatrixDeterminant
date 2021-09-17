@@ -1,14 +1,35 @@
 ﻿@page "/"
 
+@code {
+    public enum InputStatus {
+        ok,
+        badInput,
+        invalidSize
+    }
+    public InputStatus inputStatus = InputStatus.ok;
+}
+
 <h3>Enter matrix below:</h3>
 
-<textarea @bind="InputString" @bind:event="oninput" style="height:200px; width:200px" />
+<textarea @bind="InputString" @bind:event="oninput" style="height:100px; width:140px" />
 <br />
 
 <h3>Input:</h3>
-<div style="background-color:aliceblue; width: 250px">@statusString</div>
+@switch (inputStatus) {
+    case InputStatus.badInput:
+        <div style="background-color:crimson; width: 250px">Entered invalid characters</div>
+        break;
+    case InputStatus.invalidSize:
+        <div style="background-color:yellow; width: 250px">Entered matrix is not square</div>
+        break;
+    case InputStatus.ok:
+    default:
+        <div style="background-color:aliceblue; width: 250px">Ok</div>
+        break;
+}
+
 <div>
-    <textarea @bind="outputString" style="height:200px; width:200px" readonly />
+    <textarea @bind="outputString" style="height:100px; width:140px" readonly />
 </div>
 
 <h3>Determinant: @determinantString</h3>
@@ -23,7 +44,6 @@
         }
     }
 
-    public string statusString = "...";
     public string outputString = "...";
     public string determinantString = "...";
 
@@ -33,14 +53,15 @@
         }).ToArray()).ToArray();
 
         int maxSideLength = rawNums.Length;
-        bool squareMatrix = true;
+        inputStatus = InputStatus.ok;
+
         for (int i = 0; i < rawNums.Length; i++) {
             int sideLength = rawNums[i].Length;
             if (sideLength > maxSideLength) {
                 maxSideLength = sideLength;
-                squareMatrix = false;
+                inputStatus = InputStatus.invalidSize;
             } else if (sideLength != maxSideLength) {
-                squareMatrix = false;
+                inputStatus = InputStatus.invalidSize;
             }
         }
 
@@ -51,7 +72,13 @@
             for (int j = 0; j < maxSideLength; j++) {
                 double v = nums[i][j] = i < rawNums.Length && j < rawNums[i].Length ? rawNums[i][j] : 0;
 
-                int length = double.IsNaN(v) ? 3 : (int)Math.Round(Math.Log10(v));
+                int length;
+                if (double.IsNaN(v)) {
+                    length = 3;
+                    inputStatus = InputStatus.badInput;
+                } else {
+                    length = (int)Math.Round(Math.Log10(v));
+                }
                 if (length > maxLength) {
                     maxLength = length;
                 }
@@ -61,7 +88,7 @@
         Matrix m = new Matrix(nums);
 
         outputString = String.Join('\n', nums.Select(numsRow => String.Join(' ', numsRow.Select(n => String.Format("{0,-" + maxLength.ToString() + "}", n)))));
-        statusString = squareMatrix ? "Ok" : "Entered matrix is not square.";
+
         determinantString = m.CalculateDeterminant().ToString();
 
         return true;
