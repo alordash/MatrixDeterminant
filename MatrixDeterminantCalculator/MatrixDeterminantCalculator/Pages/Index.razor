@@ -1,4 +1,5 @@
 ﻿@page "/"
+@page "/MatrixDeterminant/publish/wwwroot"
 
 @code {
     public enum InputStatus {
@@ -40,14 +41,14 @@
         get { return inputString; }
         set {
             inputString = value;
-            TryCreateMatrix(inputString);
+            DisplayInformation(inputString);
         }
     }
 
     public string outputString = "...";
     public string determinantString = "...";
 
-    bool TryCreateMatrix(string input) {
+    void DisplayInformation(string input) {
         var rawNums = input.Split('\n', StringSplitOptions.RemoveEmptyEntries).Select(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries)).Select(words => words.Select(word => {
             return double.TryParse(word, out double v) ? v : double.NaN;
         }).ToArray()).ToArray();
@@ -89,8 +90,11 @@
 
         outputString = String.Join('\n', nums.Select(numsRow => String.Join(' ', numsRow.Select(n => String.Format("{0,-" + maxLength.ToString() + "}", n)))));
 
-        determinantString = m.CalculateDeterminant().ToString();
+        ShowDeterminant(m);
+    }
 
-        return true;
+    void ShowDeterminant(Matrix m) {
+        var determinant = m.CalculateDeterminant().ToString();
+        determinantString = determinant.ToString();
     }
 }
