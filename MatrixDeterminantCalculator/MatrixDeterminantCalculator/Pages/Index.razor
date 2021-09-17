@@ -30,16 +30,22 @@ Welcome to your new app.
         bool inputIsValid = true;
 
         var nums = input.Split('\n', StringSplitOptions.RemoveEmptyEntries).Select(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries)).Select(words => words.Select(word => {
-            double.TryParse(word, out double v);
-            return v;
+            return double.TryParse(word, out double v) ? v : double.NaN;
         }).ToArray()).ToArray();
 
         int w = nums.Count();
-        int h = w;
+        int maxLength = 1;
         for (int i = 0; inputIsValid && i < w; i++) {
             var numsRow = nums[i];
-            if (numsRow.Count() != w) {
+            int h = numsRow.Count();
+            if (h != w) {
                 inputIsValid = false;
+            }
+            for (int j = 0; j < h; j++) {
+                int length = (int)Math.Round(Math.Log10(numsRow[j]));
+                if (length > maxLength) {
+                    maxLength = length;
+                }
             }
         }
 
@@ -51,7 +57,7 @@ Welcome to your new app.
             m = new Matrix(nums);
         }
 
-        outputString = string.Join('\n', nums.Select(numsRow => string.Join(' ', numsRow)));
+        outputString = string.Join('\n', nums.Select(numsRow => string.Join(' ', numsRow.Select(n => String.Format("{0,-" + maxLength.ToString() + "}", n)))));
 
         return true;
     }
