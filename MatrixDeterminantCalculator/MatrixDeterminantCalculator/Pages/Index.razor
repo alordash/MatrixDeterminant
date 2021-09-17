@@ -1,6 +1,6 @@
 ﻿@page "/"
 @page "/MatrixDeterminant/publish/wwwroot"
-@using System.Threading
+@using System.Threading;
 
 @code {
     public enum InputStatus {
@@ -34,10 +34,15 @@
     <textarea @bind="outputString" style="height:100px; width:140px" readonly />
 </div>
 
-<h3 hidden="@calculationInProcess">Determinant: @determinantString</h3>
+@if(calculationInProcess) {
+    <h3>Calculating...</h3>
+} else {
+    <h3>Determinant: @determinantString</h3>
+}
 
 @code {
     public bool calculationInProcess = false;
+    CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
     private string inputString = "Type matrix here";
     public string InputString {
@@ -96,10 +101,22 @@
 
         outputString = String.Join('\n', nums.Select(numsRow => String.Join(' ', numsRow.Select(n => String.Format("{0,-" + maxLength.ToString() + "}", n)))));
 
+        if(calculationInProcess) {
+            cancellationTokenSource.Cancel(true);
+        }
         calculationInProcess = true;
-        var determinant = await matrix.CalculateDeterminant();
-        determinantString = determinant.ToString();
-        calculationInProcess = false;
-        StateHasChanged();
+        //        cancellationTokenSource.Cancel(true);
+        await Task.Delay(1000, cancellationTokenSource.Token)
+            .ContinueWith(async (t) => {
+                if(t.IsCompleted) {
+                    await matrix.CalculateDeterminant()
+                    .ContinueWith(async (det) => {
+                        calculationInProcess = false;
+                        determinantString = (await det).ToString();
+                        StateHasChanged();
+                        return det;
+                    });
+                }
+            });
     }
 }
