@@ -102,21 +102,16 @@
         outputString = String.Join('\n', nums.Select(numsRow => String.Join(' ', numsRow.Select(n => String.Format("{0,-" + maxLength.ToString() + "}", n)))));
 
         if(calculationInProcess) {
-            cancellationTokenSource.Cancel(true);
+            cancellationTokenSource.Cancel();
+            cancellationTokenSource = new CancellationTokenSource();
         }
         calculationInProcess = true;
-        //        cancellationTokenSource.Cancel(true);
-        await Task.Delay(1000, cancellationTokenSource.Token)
-            .ContinueWith(async (t) => {
-                if(t.IsCompleted) {
-                    await matrix.CalculateDeterminant()
-                    .ContinueWith(async (det) => {
-                        calculationInProcess = false;
-                        determinantString = (await det).ToString();
-                        StateHasChanged();
-                        return det;
-                    });
-                }
+        await Task.Delay(200, cancellationTokenSource.Token)
+            .ContinueWith(async (t) => await matrix.CalculateDeterminant(cancellationTokenSource.Token))
+            .ContinueWith(async (det) => {
+                calculationInProcess = false;
+                determinantString = (await await det).ToString();
+                StateHasChanged();
             });
     }
 }

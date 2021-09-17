@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MatrixDeterminantCalculator {
@@ -56,7 +57,7 @@ namespace MatrixDeterminantCalculator {
             return minor;
         }
 
-        public async Task<double> CalculateDeterminant() {
+        public async Task<double> CalculateDeterminant(CancellationToken ct) {
             if (width != height) {
                 return double.NaN;
             }
@@ -66,13 +67,14 @@ namespace MatrixDeterminantCalculator {
             if(width == 2) {
                 return matrix[0, 0] * matrix[1, 1] - matrix[0, 1] * matrix[1, 0];
             }
+            ct.ThrowIfCancellationRequested();
             await Task.Delay(1);
             double determinant = 0;
             for (int i = 0; i < width; i++) {
                 var m = matrix[i, 0];
                 if (m != 0) {
                     var minor = CalculateMinor(i, 0);
-                    double minorDeterminant = m * (await minor.CalculateDeterminant()) * (((2 + i) & 1) == 0 ? 1 : -1);
+                    double minorDeterminant = m * (await minor.CalculateDeterminant(ct)) * (((2 + i) & 1) == 0 ? 1 : -1);
                     determinant += minorDeterminant;
                 }
             }
