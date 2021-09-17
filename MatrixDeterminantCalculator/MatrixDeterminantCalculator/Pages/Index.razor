@@ -7,10 +7,11 @@ Welcome to your new app.
 <textarea @bind="InputString" @bind:event="oninput" style="height:200px; width:200px" />
 <br />
 <h3>Result:</h3>
-<br />
 <div>
-    <textarea @bind="outputString" style="height:200px; width:200px" />
+    <textarea @bind="outputString" style="height:200px; width:200px" readonly />
 </div>
+
+<div style="background-color:crimson; width: 250px">@statusString</div>
 
 @code {
     private string inputString = "Type matrix here";
@@ -22,6 +23,7 @@ Welcome to your new app.
         }
     }
 
+    public string statusString = "";
     public string outputString = "";
 
     Matrix m;
@@ -60,9 +62,7 @@ Welcome to your new app.
         m = new Matrix(nums);
 
         outputString = String.Join('\n', nums.Select(numsRow => String.Join(' ', numsRow.Select(n => String.Format("{0,-" + maxLength.ToString() + "}", n)))));
-        if(!squareMatrix) {
-            outputString += "\n Entered matrix is not square.";
-        }
+        statusString = squareMatrix ? "" : "Entered matrix is not square.";
 
         return true;
     }
