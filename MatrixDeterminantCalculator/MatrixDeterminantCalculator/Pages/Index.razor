@@ -1,17 +1,17 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+<h3>Enter matrix below:</h3>
 
-Welcome to your new app.
-<br />
 <textarea @bind="InputString" @bind:event="oninput" style="height:200px; width:200px" />
 <br />
-<h3>Result:</h3>
+
+<h3>Input:</h3>
+<div style="background-color:aliceblue; width: 250px">@statusString</div>
 <div>
     <textarea @bind="outputString" style="height:200px; width:200px" readonly />
 </div>
 
-<div style="background-color:crimson; width: 250px">@statusString</div>
+<h3>Determinant: @determinantString</h3>
 
 @code {
     private string inputString = "Type matrix here";
@@ -19,16 +19,15 @@ Welcome to your new app.
         get { return inputString; }
         set {
             inputString = value;
-            TryCreateMatrix(inputString, out m);
+            TryCreateMatrix(inputString);
         }
     }
 
-    public string statusString = "";
-    public string outputString = "";
+    public string statusString = "...";
+    public string outputString = "...";
+    public string determinantString = "...";
 
-    Matrix m;
-
-    bool TryCreateMatrix(string input, out Matrix m) {
+    bool TryCreateMatrix(string input) {
         var rawNums = input.Split('\n', StringSplitOptions.RemoveEmptyEntries).Select(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries)).Select(words => words.Select(word => {
             return double.TryParse(word, out double v) ? v : double.NaN;
         }).ToArray()).ToArray();
@@ -59,10 +58,11 @@ Welcome to your new app.
             }
         }
 
-        m = new Matrix(nums);
+        Matrix m = new Matrix(nums);
 
         outputString = String.Join('\n', nums.Select(numsRow => String.Join(' ', numsRow.Select(n => String.Format("{0,-" + maxLength.ToString() + "}", n)))));
-        statusString = squareMatrix ? "" : "Entered matrix is not square.";
+        statusString = squareMatrix ? "Ok" : "Entered matrix is not square.";
+        determinantString = m.CalculateDeterminant().ToString();
 
         return true;
     }
