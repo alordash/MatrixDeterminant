@@ -1,5 +1,6 @@
 ﻿@page "/"
 @page "/MatrixDeterminant/publish/wwwroot"
+@using System.Threading
 
 @code {
     public enum InputStatus {
@@ -16,7 +17,7 @@
 <br />
 
 <h3>Input:</h3>
-@switch (inputStatus) {
+@switch(inputStatus) {
     case InputStatus.badInput:
         <div style="background-color:crimson; width: 250px">Entered invalid characters</div>
         break;
@@ -33,9 +34,11 @@
     <textarea @bind="outputString" style="height:100px; width:140px" readonly />
 </div>
 
-<h3>Determinant: @determinantString</h3>
+<h3 hidden="@calculationInProcess">Determinant: @determinantString</h3>
 
 @code {
+    public bool calculationInProcess = false;
+
     private string inputString = "Type matrix here";
     public string InputString {
         get { return inputString; }
@@ -48,20 +51,22 @@
     public string outputString = "...";
     public string determinantString = "...";
 
-    void DisplayInformation(string input) {
-        var rawNums = input.Split('\n', StringSplitOptions.RemoveEmptyEntries).Select(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries)).Select(words => words.Select(word => {
-            return double.TryParse(word, out double v) ? v : double.NaN;
-        }).ToArray()).ToArray();
+    async Task DisplayInformation(string input) {
+        var rawNums = input.Split('\n', StringSplitOptions.RemoveEmptyEntries)
+            .Select(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+            .Select(words => words.Select(word => {
+                return double.TryParse(word, out double v) ? v : double.NaN;
+            }).ToArray()).ToArray();
 
         int maxSideLength = rawNums.Length;
         inputStatus = InputStatus.ok;
 
-        for (int i = 0; i < rawNums.Length; i++) {
+        for(int i = 0; i < rawNums.Length; i++) {
             int sideLength = rawNums[i].Length;
-            if (sideLength > maxSideLength) {
+            if(sideLength > maxSideLength) {
                 maxSideLength = sideLength;
                 inputStatus = InputStatus.invalidSize;
-            } else if (sideLength != maxSideLength) {
+            } else if(sideLength != maxSideLength) {
                 inputStatus = InputStatus.invalidSize;
             }
         }
@@ -69,31 +74,32 @@
         var rand = new Random();
         int maxLength = 1;
         double[][] nums = new double[maxSideLength][];
-        for (int i = 0; i < maxSideLength; i++) {
+        for(int i = 0; i < maxSideLength; i++) {
             nums[i] = new double[maxSideLength];
-            for (int j = 0; j < maxSideLength; j++) {
-                double v = nums[i][j] = i < rawNums.Length && j < rawNums[i].Length ? rawNums[i][j] : rand.NextDouble();
+            for(int j = 0; j < maxSideLength; j++) {
+                double v = nums[i][j] = i < rawNums.Length && j < rawNums[i].Length ? rawNums[i][j] : i + j + 1/*rand.NextDouble()*/;
 
                 int length;
-                if (double.IsNaN(v)) {
+                if(double.IsNaN(v)) {
                     length = 3;
                     inputStatus = InputStatus.badInput;
                 } else {
                     length = (int)Math.Round(Math.Log10(v));
                 }
-                if (length > maxLength) {
+                if(length > maxLength) {
                     maxLength = length;
                 }
             }
         }
 
-        Matrix m = new Matrix(nums);
+        Matrix matrix = new Matrix(nums);
 
         outputString = String.Join('\n', nums.Select(numsRow => String.Join(' ', numsRow.Select(n => String.Format("{0,-" + maxLength.ToString() + "}", n)))));
 
-        Task.Run(() => {
-            var determinant = m.CalculateDeterminant();
-            determinantString = determinant.ToString();
-        });
+        calculationInProcess = true;
+        var determinant = await matrix.CalculateDeterminant();
+        determinantString = determinant.ToString();
+        calculationInProcess = false;
+        StateHasChanged();
     }
 }
