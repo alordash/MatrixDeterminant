@@ -12,7 +12,7 @@ namespace MatrixDeterminantCalculator {
 
         public Matrix(double[][] nums) {
             w = nums.Length;
-            h = nums[0].Length;
+            h = w == 0 ? 0 : nums[0].Length;
             matrix = new double[w, h];
             for(int x = 0; x < w; x++) {
                 for(int y = 0; y < h; y++) {
