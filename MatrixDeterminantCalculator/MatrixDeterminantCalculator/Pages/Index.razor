@@ -4,12 +4,12 @@
 
 Welcome to your new app.
 <br />
-<textarea @bind="InputString" @bind:event="oninput" style="height:100px; width:100px" />
+<textarea @bind="InputString" @bind:event="oninput" style="height:200px; width:200px" />
 <br />
 <h3>Result:</h3>
 <br />
 <div>
-    <textarea @bind="outputString" style="height:100px; width:100px" />
+    <textarea @bind="outputString" style="height:200px; width:200px" />
 </div>
 
 @code {
@@ -27,37 +27,42 @@ Welcome to your new app.
     Matrix m;
 
     bool TryCreateMatrix(string input, out Matrix m) {
-        bool inputIsValid = true;
-
-        var nums = input.Split('\n', StringSplitOptions.RemoveEmptyEntries).Select(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries)).Select(words => words.Select(word => {
+        var rawNums = input.Split('\n', StringSplitOptions.RemoveEmptyEntries).Select(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries)).Select(words => words.Select(word => {
             return double.TryParse(word, out double v) ? v : double.NaN;
         }).ToArray()).ToArray();
 
-        int w = nums.Count();
-        int maxLength = 1;
-        for (int i = 0; inputIsValid && i < w; i++) {
-            var numsRow = nums[i];
-            int h = numsRow.Count();
-            if (h != w) {
-                inputIsValid = false;
+        int maxSideLength = rawNums.Length;
+        bool squareMatrix = true;
+        for (int i = 0; i < rawNums.Length; i++) {
+            int sideLength = rawNums[i].Length;
+            if (sideLength > maxSideLength) {
+                maxSideLength = sideLength;
+                squareMatrix = false;
+            } else if (sideLength != maxSideLength) {
+                squareMatrix = false;
             }
-            for (int j = 0; j < h; j++) {
-                int length = (int)Math.Round(Math.Log10(numsRow[j]));
+        }
+
+        int maxLength = 1;
+        double[][] nums = new double[maxSideLength][];
+        for (int i = 0; i < maxSideLength; i++) {
+            nums[i] = new double[maxSideLength];
+            for (int j = 0; j < maxSideLength; j++) {
+                double v = nums[i][j] = i < rawNums.Length && j < rawNums[i].Length ? rawNums[i][j] : 0;
+
+                int length = double.IsNaN(v) ? 3 : (int)Math.Round(Math.Log10(v));
                 if (length > maxLength) {
                     maxLength = length;
                 }
             }
         }
 
-        if (!inputIsValid) {
-            m = null;
-            outputString = "Entered matrix is not a square";
-            return false;
-        } else {
-            m = new Matrix(nums);
-        }
+        m = new Matrix(nums);
 
-        outputString = string.Join('\n', nums.Select(numsRow => string.Join(' ', numsRow.Select(n => String.Format("{0,-" + maxLength.ToString() + "}", n)))));
+        outputString = String.Join('\n', nums.Select(numsRow => String.Join(' ', numsRow.Select(n => String.Format("{0,-" + maxLength.ToString() + "}", n)))));
+        if(!squareMatrix) {
+            outputString += "\n Entered matrix is not square.";
+        }
 
         return true;
     }
