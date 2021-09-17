@@ -68,9 +68,12 @@ namespace MatrixDeterminantCalculator {
             }
             double determinant = 0;
             for(int i = 0; i < w; i++) {
-                var minor = CalculateMinor(i, 0);
-                double minorDeterminant = matrix[i, 0] * minor.CalculateDeterminant() * (((2 + i) & 1) == 0 ? 1 : -1);
-                determinant += minorDeterminant;
+                var m = matrix[i, 0];
+                if (m != 0) {
+                    var minor = CalculateMinor(i, 0);
+                    double minorDeterminant = m * minor.CalculateDeterminant() * (((2 + i) & 1) == 0 ? 1 : -1);
+                    determinant += minorDeterminant;
+                }
             }
             return determinant;
         }
