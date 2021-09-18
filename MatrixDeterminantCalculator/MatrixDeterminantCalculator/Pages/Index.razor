@@ -13,7 +13,7 @@
 
 <h3>Enter matrix below:</h3>
 
-<textarea @bind="InputString" @bind:event="oninput" style="height:100px; width:140px" />
+<textarea @bind="InputString" @bind:event="oninput" style="width: @(TextAreaWidth)px; height: @(TextAreaHeight)px" />
 <br />
 
 <h3>Input:</h3>
@@ -31,7 +31,7 @@
 }
 
 <div>
-    <textarea @bind="outputString" style="height:100px; width:140px" readonly />
+    <textarea @bind="outputString" style="width: @(TextAreaWidth)px; height: @(TextAreaHeight)px" readonly />
 </div>
 
 @if(Loading) {
@@ -46,6 +46,24 @@
     CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
     Matrix matrix = new Matrix(0, 0);
 
+    private const int minWidth = 140;
+    private const int minHeight = 100;
+    private int textAreaWidth = minWidth;
+    private int textAreaHeight = minHeight;
+
+    public int TextAreaWidth {
+        get { return textAreaWidth; }
+        set {
+            textAreaWidth = Math.Max(minWidth, value);
+        }
+    }
+    public int TextAreaHeight {
+        get { return textAreaHeight; }
+        set {
+            textAreaHeight = Math.Max(minHeight, value);
+        }
+    }
+
     private string inputString = "Type matrix here";
     public string InputString {
         get { return inputString; }
@@ -57,6 +75,11 @@
 
     public string outputString = "...";
     public string determinantString = "...";
+
+    void SetTextAreaSize(int width, int height, int maxNumLength) {
+        TextAreaWidth = width * maxNumLength * 11;
+        TextAreaHeight = height * 16;
+    }
 
     void DisplayInformation(string input) {
         var rawNums = input.Split('\n', StringSplitOptions.RemoveEmptyEntries)
@@ -79,7 +102,7 @@
         }
 
         var rand = new Random();
-        int maxLength = 1;
+        int maxNumLength = 1;
         double[][] nums = new double[maxSideLength][];
         for(int i = 0; i < maxSideLength; i++) {
             nums[i] = new double[maxSideLength];
@@ -93,8 +116,8 @@
                 } else {
                     length = (int)Math.Ceiling(Math.Log10(v));
                 }
-                if(length > maxLength) {
-                    maxLength = length;
+                if(length > maxNumLength) {
+                    maxNumLength = length;
                 }
             }
         }
@@ -104,8 +127,9 @@
             return;
         }
         matrix = newMatrix;
+        SetTextAreaSize(matrix.width, matrix.height, maxNumLength);
 
-        outputString = String.Join('\n', nums.Select(numsRow => String.Join(' ', numsRow.Select(n => String.Format("{0,-" + maxLength.ToString() + "}", n)))));
+        outputString = String.Join('\n', nums.Select(numsRow => String.Join(' ', numsRow.Select(n => String.Format("{0,-" + maxNumLength.ToString() + "}", n)))));
 
         if(!CalculationTask?.IsCompleted ?? false) {
             cancellationTokenSource.Cancel();
