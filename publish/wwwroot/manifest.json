@@ -1,10 +1,10 @@
 {
-  "name": "MatrixDeterminantCalculator",
-  "short_name": "MatrixDeterminantCalculator",
+  "name": "Determinant calculator",
+  "short_name": "Determinant calculator",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#03173d",
+  "theme_color": "#1a6d45",
   "icons": [
     {
       "src": "icon-512.png",
