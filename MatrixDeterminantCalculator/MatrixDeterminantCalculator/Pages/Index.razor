@@ -2,33 +2,25 @@
 @page "/MatrixDeterminant/publish/wwwroot"
 @using System.Threading
 
-@code {
-    public enum InputStatus {
-        ok,
-        badInput,
-        invalidSize
-    }
-    public InputStatus inputStatus = InputStatus.ok;
-}
-
 <h3>Enter matrix below:</h3>
 
 <textarea @bind="InputString" @bind:event="oninput" style="width: @(TextAreaWidth)px; height: @(TextAreaHeight)px" />
 <br />
 
-<h3>Input:</h3>
+<h3>Matrix size: @MatriSizeString</h3>
 @switch(inputStatus) {
     case InputStatus.badInput:
-        <div style="background-color:crimson; width: 250px">Entered invalid characters</div>
+        <div style="background-color:crimson; width: 140px">Invalid input</div>
         break;
     case InputStatus.invalidSize:
-        <div style="background-color:yellow; width: 250px">Entered matrix is not square</div>
+        <div style="background-color: #fffb4d; width: 140px">Incomplete input </div>
         break;
     case InputStatus.ok:
     default:
-        <div style="background-color:aliceblue; width: 250px">Ok</div>
+        <div style="background-color: aliceblue; width: 140px">Ok</div>
         break;
 }
+<br />
 
 <div>
     <textarea @bind="outputString" style="width: @(TextAreaWidth)px; height: @(TextAreaHeight)px" readonly />
@@ -41,6 +33,13 @@
 }
 
 @code {
+    public enum InputStatus {
+        ok,
+        badInput,
+        invalidSize
+    }
+    public InputStatus inputStatus = InputStatus.ok;
+
     public Task CalculationTask;
     public bool Loading = false;
     CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
@@ -63,6 +62,8 @@
             textAreaHeight = Math.Max(minHeight, value);
         }
     }
+
+    public string MatriSizeString = ". . .";
 
     private string inputString = "Type matrix here";
     public string InputString {
@@ -107,7 +108,7 @@
         for(int i = 0; i < maxSideLength; i++) {
             nums[i] = new double[maxSideLength];
             for(int j = 0; j < maxSideLength; j++) {
-                double v = nums[i][j] = i < rawNums.Length && j < rawNums[i].Length ? rawNums[i][j] : (i == j ? 1 : 0);
+                double v = nums[i][j] = i < rawNums.Length && j < rawNums[i].Length ? rawNums[i][j] : 0;
 
                 int length;
                 if(double.IsNaN(v)) {
@@ -128,6 +129,7 @@
         }
         matrix = newMatrix;
         SetTextAreaSize(matrix.width, matrix.height, maxNumLength);
+        MatriSizeString = String.Format("{0}x{1}", matrix.width, matrix.height);
 
         outputString = String.Join('\n', nums.Select(numsRow => String.Join(' ', numsRow.Select(n => String.Format("{0,-" + maxNumLength.ToString() + "}", n)))));
 
