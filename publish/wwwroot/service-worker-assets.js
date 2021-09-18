@@ -109,7 +109,7 @@
       "url": "_framework\/System.IO.Pipelines.dll"
     },
     {
-      "hash": "sha256-UHZ0VsRGoOseJU+evWyWlEfLpqVbOenHZutOf2URSHY=",
+      "hash": "sha256-jjparDW6wBn0+xt9HdUtVmm7voKNLrxfmXxENn6uaXU=",
       "url": "_framework\/MatrixDeterminantCalculator.dll"
     },
     {
@@ -197,7 +197,7 @@
       "url": "_framework\/System.Private.CoreLib.dll"
     },
     {
-      "hash": "sha256-Lc6xWF8E7r4pYgV5yBU3JpqArZrNW8Em8uKkUj2NqLU=",
+      "hash": "sha256-KtdqahFD+41fwTZUx1sAUfadz53cse+FX3VgD4tgaFk=",
       "url": "_framework\/blazor.boot.json"
     },
     {
@@ -205,5 +205,5 @@
       "url": "_framework\/blazor.webassembly.js"
     }
   ],
-  "version": "nKAenvR4"
+  "version": "1\/VkASCC"
 };
