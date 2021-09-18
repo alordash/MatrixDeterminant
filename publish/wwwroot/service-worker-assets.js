@@ -9,16 +9,12 @@
       "url": "icon-512.png"
     },
     {
-      "hash": "sha256-XPBSRynhouNnrACvlKO3+e5KujGPp9KLhgdajaodaRo=",
+      "hash": "sha256-t7umyPuWBvErm+lr4IkcvAQJK0bRSSWTsKDMifcnjaw=",
       "url": "index.html"
     },
     {
       "hash": "sha256-89t9tNQEDINZZMIxksn10m0so3hi46MS47+jY9xHmAc=",
       "url": "manifest.json"
-    },
-    {
-      "hash": "sha256-yzFf+O\/mlH+Q9klUSqXP2kxGKOUFLPxaww8da8fKhGU=",
-      "url": "sample-data\/weather.json"
     },
     {
       "hash": "sha256-PvlHrby1PYtdX46ITs6pB8iDNqXNcewh8Eoa\/Gm2+GM=",
@@ -209,5 +205,5 @@
       "url": "_framework\/blazor.webassembly.js"
     }
   ],
-  "version": "Cwo30\/Kc"
+  "version": "nKAenvR4"
 };
