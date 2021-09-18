@@ -107,7 +107,7 @@
         for(int i = 0; i < maxSideLength; i++) {
             nums[i] = new double[maxSideLength];
             for(int j = 0; j < maxSideLength; j++) {
-                double v = nums[i][j] = i < rawNums.Length && j < rawNums[i].Length ? rawNums[i][j] : i + j + 1/*rand.NextDouble()*/;
+                double v = nums[i][j] = i < rawNums.Length && j < rawNums[i].Length ? rawNums[i][j] : (i == j ? 1 : 0);
 
                 int length;
                 if(double.IsNaN(v)) {
