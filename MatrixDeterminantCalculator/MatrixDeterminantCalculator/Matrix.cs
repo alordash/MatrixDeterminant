@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MatrixDeterminantCalculator {
 
-    public class Matrix {
+    public class Matrix : IComparable {
         private double[,] matrix;
         public readonly int width;
         public readonly int height;
@@ -80,5 +80,23 @@ namespace MatrixDeterminantCalculator {
             }
             return determinant;
         }
+
+        public int CompareTo(object? obj) {
+            if(!(obj is Matrix)) {
+                return -1;
+			}
+            var matrix = (Matrix)obj;
+            if(matrix.width != width || matrix.height != height) {
+                return 1;
+			}
+            for(int x = 0; x < width; x++) {
+                for(int y = 0; y < height; y++) {
+                    if(this[x, y] != matrix[x, y]) {
+                        return 1;
+					}
+				}
+			}
+            return 0;
+		}
     }
 }

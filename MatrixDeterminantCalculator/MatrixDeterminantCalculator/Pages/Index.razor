@@ -44,6 +44,7 @@
     public Task CalculationTask;
     public bool Loading = false;
     CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+    Matrix matrix = new Matrix(0, 0);
 
     private string inputString = "Type matrix here";
     public string InputString {
@@ -98,7 +99,11 @@
             }
         }
 
-        Matrix matrix = new Matrix(nums);
+        var newMatrix = new Matrix(nums);
+        if(matrix.CompareTo(newMatrix) == 0) {
+            return;
+        }
+        matrix = newMatrix;
 
         outputString = String.Join('\n', nums.Select(numsRow => String.Join(' ', numsRow.Select(n => String.Format("{0,-" + maxLength.ToString() + "}", n)))));
 
@@ -117,7 +122,7 @@
         }, cancellationToken)).ContinueWith(t => {
             StateHasChanged();
         });
-        Task.Delay(300).ContinueWith((t) => {
+        Task.Delay(200).ContinueWith((t) => {
             Loading = !CalculationTask.IsCompleted;
             StateHasChanged();
         });
