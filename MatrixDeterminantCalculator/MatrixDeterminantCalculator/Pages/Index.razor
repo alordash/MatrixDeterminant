@@ -2,43 +2,49 @@
 @page "/MatrixDeterminant/publish/wwwroot"
 @using System.Threading
 
-<h3>Enter matrix below:</h3>
+<div class="mainHolder">
+    <div class="info" style="width:210px">Enter matrix below:</div>
 
-<textarea @bind="InputString" @bind:event="oninput" style="width: @(TextAreaWidth)px; height: @(TextAreaHeight)px" />
-<br />
+<textarea @bind="InputString" @bind:event="oninput" style="width: @(TextAreaWidth)px; height: @(TextAreaHeight)px" placeholder="Type matrix here..." />
+    <br />
 
-<h3>Matrix size: @MatriSizeString</h3>
-@switch(inputStatus) {
-    case InputStatus.badInput:
-        <div style="background-color:crimson; width: 140px">Invalid input</div>
-        break;
-    case InputStatus.invalidSize:
-        <div style="background-color: #fffb4d; width: 140px">Incomplete input </div>
-        break;
-    case InputStatus.ok:
-    default:
-        <div style="background-color: aliceblue; width: 140px">Ok</div>
-        break;
-}
-<br />
+    <div class="info" style="width:210px">Matrix size: @MatriSizeString</div>
 
-<div>
-    <textarea @bind="outputString" style="width: @(TextAreaWidth)px; height: @(TextAreaHeight)px" readonly />
+    @switch(inputStatus) {
+        case InputStatus.waitingForInput:
+            <div class="status" style="background-color: #cbe6bc; width: 140px">Waiting for input...</div>
+            break;
+        case InputStatus.badInput:
+            <div class="status" style="background-color:crimson; width: 140px">Invalid input</div>
+            break;
+        case InputStatus.invalidSize:
+            <div class="status" style="background-color: #e4c335; width: 140px ">Incomplete input</div>
+            break;
+        case InputStatus.ok:
+        default:
+            <div class="status" style="background-color: #cbe6bc; width: 140px">Ok</div>
+            break;
+    }
+
+    <div>
+        <textarea @bind="outputString" style="width: @(TextAreaWidth)px; height: @(TextAreaHeight)px" readonly placeholder="Result" />
+    </div>
+
+    @if(Loading) {
+        <div class="info" style="width:210px">Loading...</div>
+    } else {
+        <div class="info" style="width:210px">Determinant: <b>@determinantString</b></div>
+    }
 </div>
-
-@if(Loading) {
-    <h3>Loading...</h3>
-} else {
-    <h3>Determinant: @determinantString</h3>
-}
 
 @code {
     public enum InputStatus {
+        waitingForInput,
         ok,
         badInput,
         invalidSize
     }
-    public InputStatus inputStatus = InputStatus.ok;
+    public InputStatus inputStatus = InputStatus.waitingForInput;
 
     public Task CalculationTask;
     public bool Loading = false;
@@ -46,7 +52,7 @@
     Matrix matrix = new Matrix(0, 0);
 
     private const int minWidth = 140;
-    private const int minHeight = 100;
+    private const int minHeight = 70;
     private int textAreaWidth = minWidth;
     private int textAreaHeight = minHeight;
 
@@ -63,9 +69,9 @@
         }
     }
 
-    public string MatriSizeString = ". . .";
+    public string MatriSizeString = "N/A";
 
-    private string inputString = "Type matrix here";
+    private string inputString = "";
     public string InputString {
         get { return inputString; }
         set {
@@ -78,8 +84,8 @@
     public string determinantString = "...";
 
     void SetTextAreaSize(int width, int height, int maxNumLength) {
-        TextAreaWidth = width * maxNumLength * 11;
-        TextAreaHeight = height * 16;
+        TextAreaWidth = width * maxNumLength * 16;
+        TextAreaHeight = height * 22;
     }
 
     void DisplayInformation(string input) {
@@ -112,7 +118,7 @@
 
                 int length;
                 if(double.IsNaN(v)) {
-                    length = 3;
+                    length = v.ToString().Length;
                     inputStatus = InputStatus.badInput;
                 } else {
                     length = (int)Math.Ceiling(Math.Log10(v));
