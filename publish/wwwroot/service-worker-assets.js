@@ -9,7 +9,7 @@
       "url": "icon-512.png"
     },
     {
-      "hash": "sha256-EwRh\/ZO9w1s2FDJQ95dAITCZIj741CDl+8Cf3jrgiJ8=",
+      "hash": "sha256-JqpFb5yHYURPd3gWyFDgGrX7eS7VNAnNlwEYP6kAqOE=",
       "url": "index.html"
     },
     {
@@ -109,7 +109,7 @@
       "url": "_framework\/System.IO.Pipelines.dll"
     },
     {
-      "hash": "sha256-jjparDW6wBn0+xt9HdUtVmm7voKNLrxfmXxENn6uaXU=",
+      "hash": "sha256-Cp\/hJcqRR6XvsGMqf2jEt0\/FTmqNrB\/BrdueHe0pj3w=",
       "url": "_framework\/MatrixDeterminantCalculator.dll"
     },
     {
@@ -197,7 +197,7 @@
       "url": "_framework\/System.Private.CoreLib.dll"
     },
     {
-      "hash": "sha256-KtdqahFD+41fwTZUx1sAUfadz53cse+FX3VgD4tgaFk=",
+      "hash": "sha256-ktgIRhq0SPrEag+xOQrqMij6ShH3x5Uvnenq2MO6zGY=",
       "url": "_framework\/blazor.boot.json"
     },
     {
@@ -205,5 +205,5 @@
       "url": "_framework\/blazor.webassembly.js"
     }
   ],
-  "version": "j+hRE6Wj"
+  "version": "Y91vKNyS"
 };
